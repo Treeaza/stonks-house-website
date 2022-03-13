@@ -14,8 +14,8 @@ body {
 	align-items: center;
 	flex-direction: column;
 	justify-content: center;
-	background-color: black;
-    background-image: url(assets/Triangles.png);
+	background-color: whitesmoke;
+	background-image: url(assets/WhiteTriangles.png);
     background-size: auto 100%;
     color: #570080;
     font-family: 'Oswald', sans-serif;
