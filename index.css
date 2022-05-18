@@ -1,5 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Oswald&family=Playfair+Display:wght@500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
 
 html {
 	height: 100%;
@@ -14,47 +14,29 @@ body {
 	align-items: center;
 	flex-direction: column;
 	justify-content: center;
-	background-color: #b78ce7;
+	background-image: url("assets/Triangles.png");
+	background-color: black;
+	background-size: auto 100%;
+    color: #570080;
+    font-family: 'Share Tech Mono', monospace;
+    overflow: -moz-scrollbars-none;
+}
+
+h1 {
+    font-size: 4vw;
 }
 
 #blocker {
-	background-color: black;
-	position: fixed;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
-	z-index: 1;
-	opacity: 0;
-	transition: 2s;
-	pointer-events: none;
-}
-
-#pin {
-	width: 60%;
-	transform: translate(0, 40px);
-	z-index: -1;
-	transition: 3s;
-}
-
-#lock {
-	width: 100%;
-}
-
-#code-prompt {
-	font-family: 'Playfair Display', serif;
-	font-size: 32pt;
-	width: 100%;
-	text-align: center;
-}
-
-#lock-box {
-	display: flex;
-	align-items: center;
-	flex-direction: column;
-	width: 200px;
-	margin: 40px;
-	cursor: pointer;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    background-color: black;
+    pointer-events: none;
+    opacity: 0;
+    transition: 2s;
 }
 
 #entry-box {
@@ -62,20 +44,33 @@ body {
 	align-items: center;
 	flex-direction: column;
 	margin: 40px;
+    width: 50%;
 }
 
 #code-box {
 	font-family: 'Oswald', sans-serif;
 	text-align: center;
 	font-size: 28pt;
-	border-color: black;
-	border-style: double;
-	border-width: 10px;
+	border-color: #570080;
+	border-style: solid;
+	border-width: 5px;
 	text-transform: uppercase;
+    color: #570080;
 	padding: 10px;
+    width:  100%;
 }
 
-#hint {
-	opacity: 0;
-	transition: 2s;
+#legacy-link {
+	position: fixed;
+	right: 5%;
+	top: 5%;
+}
+
+#legacy-link a {
+	color: #570080;
+	font-size: 2em;
+}
+
+#legacy-link a.visited {
+	color: #570080;
 }
