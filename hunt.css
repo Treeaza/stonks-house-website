@@ -31,8 +31,24 @@ body {
 	transition: 2s;
 }
 
+#alethiometer-holder {
+	width: 0;
+	height: 0;
+	left: 50%;
+	top: 50%;
+	position: fixed;
+}
+
+#alethiometer {
+	width: 400px;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
+}
+
 #zodiac-container {
 	width: 0;
+	height: 0;
 	left: 50%;
 	top: 50%;
 	position: fixed;
