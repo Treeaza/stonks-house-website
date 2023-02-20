@@ -4,28 +4,37 @@ const ALETHIOMETER = document.querySelector("#alethiometer-holder");
 
 const COUNT = ZODIACS.length;
 const SCALE = 0.5;
+const RADIUS = 300;
+const SPECIAL_RADIUS = 50;
 
-var angle_offset = 0;
-var radius = 300;
+var angleOffset = 0;
 
 function redraw() {
 	for (var i = 0; i < COUNT; i++) {
 		var zodiac = ZODIACS[i];
 
-		var angle = (2 * Math.PI * i / COUNT) + angle_offset;
-		var x = radius * Math.sin(angle);
-		var y = -radius * Math.cos(angle);
+		var localAngle = (2 * Math.PI * i / COUNT);
+		var angle = localAngle + angleOffset;
+
+		var deltaNorm = angle + angleOffset;
+		while (deltaNorm > Math.PI) {
+			deltaNorm -= Math.PI * 2;
+		}
+		var specialRadius = Math.abs(deltaNorm) < 0.55 ? SPECIAL_RADIUS * Math.pow(Math.cos((deltaNorm) * 3), 3) : 0;
+
+		var x = (RADIUS + specialRadius) * Math.sin(angle);
+		var y = -(RADIUS + specialRadius) * Math.cos(angle);
 
 		zodiac.style.transform = "translate(" + x + "px, " + y + "px) rotate(" + (angle * 180 / Math.PI) + "deg) scale(" + SCALE + ")";
 	}
 
-	ALETHIOMETER.style.transform = "rotate(" + (-angle_offset * 180 / Math.PI) + "deg)";
+	ALETHIOMETER.style.transform = "rotate(" + (-angleOffset * 180 / Math.PI) + "deg)";
 }
 
 setInterval(function () {
-	angle_offset += (2 * Math.PI) * (1 / 12000);
-	while (angle_offset > 2 * Math.PI) {
-		angle_offset -= 2 * Math.PI;
+	angleOffset += (2 * Math.PI) * (1 / 12000);
+	while (angleOffset > 2 * Math.PI) {
+		angleOffset -= 2 * Math.PI;
 	}
 	redraw();
 }, 5);
