@@ -37,6 +37,8 @@ body {
 	left: 50%;
 	top: 50%;
 	position: fixed;
+	transition-duration: 10ms;
+	transition: opacity 2s;
 }
 
 #alethiometer {
@@ -58,6 +60,7 @@ body {
 	position: absolute;
 	width: 0;
 	height: 0;
+	transition: opacity 4s;
 }
 
 .zodiac-item {
@@ -65,4 +68,32 @@ body {
 	left: 50%;
 	top: 50%;
 	transform: translate(-50%, -50%);
+}
+
+#join-button {
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
+	width: 200px;
+	height: 50px;
+	border: solid white 5px;
+	border-radius: 30px;
+	background-color: black;
+	color: white;
+	transition: opacity 2s;
+	font-family: monospace;
+}
+
+#join-button:hover {
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
+	width: 200px;
+	height: 50px;
+	border: solid white 5px;
+	border-radius: 30px;
+	background-color: gray;
+	color: white;
 }
