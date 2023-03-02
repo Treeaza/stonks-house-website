@@ -3,6 +3,7 @@ const ZODIACS = document.querySelectorAll(".zodiac-holder");
 const ALETHIOMETER = document.querySelector("#alethiometer-holder");
 const RULES_TOGGLE_BUTTON = document.querySelectorAll(".rules-toggle");
 const RULES = document.querySelector("#rules");
+const BLOCKER = document.querySelector("#blocker");
 
 const COUNT = ZODIACS.length;
 const SCALE = 0.5;
@@ -133,3 +134,6 @@ function toggleRulesDisplay() {
 }
 
 RULES_TOGGLE_BUTTON.forEach(function (e) { e.onclick = toggleRulesDisplay; });
+setTimeout(function() {
+	BLOCKER.style.opacity = 0;
+}, 1000);
