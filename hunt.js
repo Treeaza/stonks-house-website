@@ -1,7 +1,8 @@
 const ZODIAC_CONTAINER = document.querySelector("#zodiac-container");
 const ZODIACS = document.querySelectorAll(".zodiac-holder");
 const ALETHIOMETER = document.querySelector("#alethiometer-holder");
-const JOIN_BUTTON = document.querySelector("#join-button");
+const RULES_TOGGLE_BUTTON = document.querySelectorAll(".rules-toggle");
+const RULES = document.querySelector("#rules");
 
 const COUNT = ZODIACS.length;
 const SCALE = 0.5;
@@ -11,6 +12,8 @@ var tricked = false;
 
 var angleOffset = 0;
 var baseRadius = 300;
+
+var rulesVisible = false;
 
 function sleep(ms) {
 	return new Promise(resolve => setTimeout(resolve, ms));
@@ -55,8 +58,6 @@ function normalizeAngleOffset() {
 		angleOffset -= 2 * Math.PI;
 	}
 }
-
-JOIN_BUTTON.addEventListener("click", trick);
 var basicSpin = spin(1, 0);
 
 async function trick() {
@@ -101,3 +102,34 @@ async function trick() {
 	ALETHIOMETER.style.opacity = "0";
 	await sleep(2000);
 }
+
+/* Countdown */
+const COUNTDOWN = document.querySelector("#countdown");
+const EVENT_TIME = new Date("March 12, 2023 4:57:00");
+
+function getTimeUntilTime(target) {
+	let remainingMillis = target - Date.now();
+	let days = Math.floor(remainingMillis / (1000 * 3600 * 24));
+	remainingMillis -= days * (1000 * 3600 * 24);
+	let hours = Math.floor(remainingMillis / (1000 * 3600));
+	remainingMillis -= hours * (1000 * 3600);
+	let minutes = Math.floor(remainingMillis / (1000 * 60));
+	remainingMillis -= minutes * (1000 * 60);
+	let seconds = Math.floor(remainingMillis / (1000));
+	return [days, hours, minutes, seconds];
+}
+
+setInterval(function () {
+	let [days, hours, minutes, seconds] = getTimeUntilTime(EVENT_TIME);
+	COUNTDOWN.innerHTML = days + ":" + String(hours).padStart(2, '0') + ":" + String(minutes).padStart(2, '0') + ":" + String(seconds).padStart(2, '0');
+}, 1000);
+
+function toggleRulesDisplay() {
+	console.log("Toggling rules");
+	rulesVisible = !rulesVisible;
+
+	RULES.style.display = rulesVisible ? "inherit" : "none";
+	RULES.style.zIndex = rulesVisible ? 1 : -1;
+}
+
+RULES_TOGGLE_BUTTON.forEach(function (e) { e.onclick = toggleRulesDisplay; });
