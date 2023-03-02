@@ -129,8 +129,10 @@ function toggleRulesDisplay() {
 	console.log("Toggling rules");
 	rulesVisible = !rulesVisible;
 
-	RULES.style.display = rulesVisible ? "inherit" : "none";
-	RULES.style.zIndex = rulesVisible ? 1 : -1;
+	RULES.style.opacity = rulesVisible ? 1 : 0;
+	setTimeout(function() {
+		RULES.style.zIndex = rulesVisible ? 1 : -1;
+	}, rulesVisible? 0: 1000);
 }
 
 RULES_TOGGLE_BUTTON.forEach(function (e) { e.onclick = toggleRulesDisplay; });
