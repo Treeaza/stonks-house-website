@@ -4,6 +4,7 @@ const ALETHIOMETER = document.querySelector("#alethiometer-holder");
 const RULES_TOGGLE_BUTTON = document.querySelectorAll(".rules-toggle");
 const RULES = document.querySelector("#rules");
 const BLOCKER = document.querySelector("#blocker");
+const CLOSE = document.querySelector("#close");
 
 const COUNT = ZODIACS.length;
 const SCALE = 0.5;
@@ -68,7 +69,7 @@ async function trick() {
 	tricked = true;
 
 	// cleanup
-	JOIN_BUTTON.style.opacity = "0";
+	//JOIN_BUTTON.style.opacity = "0";
 	clearInterval(basicSpin);
 
 	// spin faster as constellation expands
@@ -132,6 +133,7 @@ function toggleRulesDisplay() {
 	RULES.style.opacity = rulesVisible ? 1 : 0;
 	setTimeout(function() {
 		RULES.style.zIndex = rulesVisible ? 1 : -1;
+		CLOSE.disabled = !rulesVisible;
 	}, rulesVisible? 0: 1000);
 }
 
