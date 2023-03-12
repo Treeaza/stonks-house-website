@@ -83,6 +83,11 @@ body {
 	width: 10%;
 	min-width: 400px;
 	z-index: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+	align-items: center;
+	transition: opacity 2s;
 }
 
 #rules {
@@ -107,6 +112,7 @@ body {
 }
 
 #rules-toggle {
+	width: 50%;
 	border: 5px solid white;
 	border-radius: 10px;
 	background-color: #00000000;
@@ -125,6 +131,34 @@ body {
 }
 
 #rules-toggle:active {
+	border: 5px solid white;
+	border-radius: 10px;
+	background-color: white;
+	color: white;
+	font-family: monospace;
+	padding: 10px;
+}
+
+#signup {
+	width: 50%;
+	border: 5px solid white;
+	border-radius: 10px;
+	background-color: #00000000;
+	color: white;
+	font-family: monospace;
+	padding: 10px;
+}
+
+#signup:hover {
+	border: 5px solid white;
+	border-radius: 10px;
+	background-color: gray;
+	color: white;
+	font-family: monospace;
+	padding: 10px;
+}
+
+#signup:active {
 	border: 5px solid white;
 	border-radius: 10px;
 	background-color: white;

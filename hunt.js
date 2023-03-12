@@ -5,6 +5,10 @@ const RULES_TOGGLE_BUTTON = document.querySelectorAll(".rules-toggle");
 const RULES = document.querySelector("#rules");
 const BLOCKER = document.querySelector("#blocker");
 const CLOSE = document.querySelector("#close");
+const SIGNUP_BUTTON = document.querySelector("#signup");
+const BLOCK = document.querySelector("#block");
+
+const SIGNUP_FORM_LINK = "https://forms.gle/NeCPRfCtfVZXqKPT8";
 
 const COUNT = ZODIACS.length;
 const SCALE = 0.5;
@@ -69,7 +73,6 @@ async function trick() {
 	tricked = true;
 
 	// cleanup
-	//JOIN_BUTTON.style.opacity = "0";
 	clearInterval(basicSpin);
 
 	// spin faster as constellation expands
@@ -131,13 +134,22 @@ function toggleRulesDisplay() {
 	rulesVisible = !rulesVisible;
 
 	RULES.style.opacity = rulesVisible ? 1 : 0;
-	setTimeout(function() {
+	setTimeout(function () {
 		RULES.style.zIndex = rulesVisible ? 1 : -1;
 		CLOSE.disabled = !rulesVisible;
-	}, rulesVisible? 0: 1000);
+	}, rulesVisible ? 0 : 1000);
 }
 
 RULES_TOGGLE_BUTTON.forEach(function (e) { e.onclick = toggleRulesDisplay; });
-setTimeout(function() {
+setTimeout(function () {
 	BLOCKER.style.opacity = 0;
 }, 1000);
+
+SIGNUP_BUTTON.onclick = async function () {
+	BLOCK.style.opacity = 0;
+	await trick();
+	BLOCKER.style.opacity = 1;
+	setTimeout(function () {
+		window.location.replace(SIGNUP_FORM_LINK);
+	}, 4000);
+}
