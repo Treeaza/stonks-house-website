@@ -18,6 +18,33 @@ function decrypt(code, content) {
 	return bytes.toString(CryptoJS.enc.Utf8);
 }
 
+function setCodephraseCookie(codephrase) {
+	var date = new Date();
+
+	// keep the cookie for 5 days
+	date.setTime(date.getTime() + (5 * 24 * 60 * 60 * 1000));
+	document.cookie = "codephrase=" + codephrase + "; expires=" + date.toGMTString() + "; path=/";
+}
+
+function getCodephraseCookie() {
+	var cookies = document.cookie.split(";");
+
+	for (var i = 0; i < cookies.length; i++) {
+		var cookie = cookies[i];
+		
+		// trim
+		while (cookie.charAt(0) == " ") {
+			cookie = cookie.substring(1, cookie.length);
+		}
+
+		if (cookie.indexOf("codephrase=") == 0) {
+			return cookie.substring(11, cookie.length);
+		}
+	}
+
+	return null;
+}
+
 // zodiac and alethiometer
 const ZODIAC_CONTAINER = document.querySelector("#zodiac-container");
 const ZODIACS = document.querySelectorAll(".zodiac-holder");
@@ -44,10 +71,9 @@ function redraw() {
 		while (deltaNorm > Math.PI) {
 			deltaNorm -= Math.PI * 2;
 		}
-		var specialRadius = Math.abs(deltaNorm) < 0.55 ? SPECIAL_RADIUS * Math.pow(Math.cos((deltaNorm) * 3), 3) : 0;
 
-		var x = (baseRadius + specialRadius) * Math.sin(angle);
-		var y = -(baseRadius + specialRadius) * Math.cos(angle);
+		var x = baseRadius * Math.sin(angle);
+		var y = -baseRadius * Math.cos(angle);
 
 		zodiac.style.transform = "translate(" + x + "px, " + y + "px) rotate(" + (angle * 180 / Math.PI) + "deg) scale(" + SCALE + ")";
 	}
@@ -66,7 +92,7 @@ function spin(rpm, dv) {
 		redraw();
 	}, 5);
 }
-var basicSpin = spin(1, 0);
+var basicSpin = spin(2, 0);
 
 async function trick() {
 	if (tricked)
@@ -78,36 +104,25 @@ async function trick() {
 	clearInterval(basicSpin);
 
 	// spin faster as constellation expands
-	var fastSpin = spin(1, 2);
-	var expand = setInterval(function () {
-		baseRadius += baseRadius < 400 ? 1 : 3;
-	}, 30);
+	var fastSpin = spin(2, 5);
+	await sleep(500);
 
-	await sleep(7000);
-
-	// after 7s slow ring to stop
-	clearInterval(fastSpin);
-	clearInterval(expand);
 	// fade out constellations
-	for (var i = 0; i < COUNT; i++) {
-		var zodiac = ZODIACS[i];
-		zodiac.style.opacity = "0";
-	}
+	var val = 1.0;
+	var fade = setInterval(function() {
+		for (var i = 0; i < COUNT; i++) {
+			var zodiac = ZODIACS[i];
+			zodiac.style.opacity = val.toString();
+		}
+		val -= 0.02;
+	}, 20);
 
-	// spin ring back to zero
-	slowSpin = spin(50, -3.5);
 	await sleep(2000);
-	clearInterval(slowSpin);
-
-	while (angleOffset < 2 * Math.PI) {
-		angleOffset += ((2 * Math.PI - angleOffset) * 0.006) + 0.0005;
-		redraw();
-		await sleep(5);
-	}
 
 	// fade out
 	ALETHIOMETER.style.opacity = "0";
-	await sleep(2000);
+	await sleep(1500);
+	clearInterval(fastSpin);
 }
 
 setTimeout(function () {
@@ -117,19 +132,26 @@ setTimeout(function () {
 // codephrase entry
 const CODEPHRASE_ENTRY_FIELD = document.querySelector("#codephrase-entry-field");
 const CODEPHRASE_ENTRY_BUTTON = document.querySelector("#codephrase-entry-button");
-const cpHashes = ["hehe"];
+const CODE_ENTRY = document.querySelector("#code-entry");
+const cpHashes = ["U2FsdGVkX195Qjb/WD5LbWTwevYDVFqKDUDq5z4NXBI="];
 
-var codephrase = null;
+var codephrase = getCodephraseCookie();
+
+// check for cookie, log it if it exists
+if (codephrase != null) {
+	CODEPHRASE_ENTRY_FIELD.value = codephrase;
+} else {
+	console.log("No saved codephrase found.");
+}
 
 CODEPHRASE_ENTRY_BUTTON.addEventListener("click", async function () {
 	// check hash
 	var entered = (CODEPHRASE_ENTRY_FIELD.value).toLowerCase();
-	var hash = entered;//encrypt(entered, entered);
 
 	var valid = false;
 	var index = 0;
 	while (!valid) {
-		if (hash == cpHashes[index]) {
+		if (decrypt(entered, cpHashes[index]) == entered) {
 			valid = true;
 		} else {
 			index++;
@@ -145,13 +167,48 @@ CODEPHRASE_ENTRY_BUTTON.addEventListener("click", async function () {
 	}
 
 	// valid codephrase
-	codephease = entered;
+	codephrase = entered;
+
+	// save cookie for next time
+	setCodephraseCookie(codephrase);
+
 	CODEPHRASE_ENTRY_FIELD.style.opacity = "0";
 	CODEPHRASE_ENTRY_BUTTON.style.opacity = "0";
 	CODEPHRASE_ENTRY_FIELD.style.zIndex = "-100";
 	CODEPHRASE_ENTRY_BUTTON.style.zIndex = "-100";
-	await sleep(1000);
-	trick();
+	await trick();
 
-	// set up code entry page
+	// reveal code entry page
+	CODE_ENTRY.style.opacity = 1;
+	CODE_ENTRY.style.zIndex = 10;
+});
+
+
+// code entry
+const CONSTELLATION_BUTTONS = document.querySelectorAll(".constellation-button");
+
+var clickedButtons = [];
+
+// put CBs on all the buttons
+CONSTELLATION_BUTTONS.forEach(function (button) {
+	var index = button.id.split("-").at(-1);
+	button.addEventListener("click", function () {
+		if (clickedButtons.includes(index)) {
+			clickedButtons.splice(clickedButtons.indexOf(index), 1);
+			button.style.borderColor = "darkslateblue";
+		} else {
+			clickedButtons.push(index);
+			button.style.borderColor = "lightskyblue";
+		}
+	});
+	button.addEventListener("mouseenter", function () {
+		button.style.borderColor = "white";
+	});
+	button.addEventListener("mouseleave", function () {
+		if (clickedButtons.includes(index)) {
+			button.style.borderColor = "lightskyblue";
+		} else {
+			button.style.borderColor = "darkslateblue";
+		}
+	});
 });

@@ -60,7 +60,7 @@ body {
 	position: absolute;
 	width: 0;
 	height: 0;
-	transition: opacity 4s;
+	transition: opacity 2s;
 }
 
 .zodiac-item {
@@ -230,12 +230,111 @@ body {
 	transition: opacity 2s;
 }
 
-#codephrase-entry-button {
+.standard-button {
 	background-color: black;
 	color: white;
 	height: auto;
 	border: 2px solid white;
 	padding-top: 5px;
 	padding-bottom: 5px;
+}
+
+.standard-button:hover {
+	background-color: white;
+	color: black;
+	border: 2px solid white;
+}
+
+#codephrase-entry-button {
 	transition: opacity 2s;
+}
+
+#code-entry {
+	width: 100%;
+	height: 100%;
+	position: fixed;
+	left: 0;
+	top: 0;
+	z-index: -100;
+	opacity: 0;
+	transition: opacity 2s;
+	background-color: #000000CC;
+
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
+
+#constellation {
+	max-width: 90%;
+	max-height: 90%;
+	position: relative;
+}
+
+#constellation-image {
+	position: relative;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
+}
+
+.constellation-button {
+	width: 0px;
+	height: 0px;
+	border: 7px darkslateblue solid;
+	border-radius: 7px;
+	position: absolute;
+	left: 50%;
+	top: 50%;
+}
+
+#constellation-button-1 {
+	transform: translate(126px, -62px);
+}
+
+#constellation-button-2 {
+	transform: translate(53px, 48px);
+}
+
+#constellation-button-3 {
+	transform: translate(57.5px, -14.5px);
+}
+
+#constellation-button-4 {
+	transform: translate(-6px, -81px);
+}
+
+#constellation-button-5 {
+	transform: translate(1px, 54px);
+}
+
+#constellation-button-6 {
+	transform: translate(-93px, -99px);
+}
+
+#constellation-button-7 {
+	transform: translate(-91px, -47.5px);
+}
+
+#constellation-button-8 {
+	transform: translate(-142px, 41px);
+}
+
+#constellation-submit {
+	z-index: 10;
+	width: 50px;
+	height: 50px;
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	transform: translate(55px, -140px);
+	border-radius: 25px;
+	background-color: white;
+	color: black;
+}
+
+#constellation-submit:hover {
+	background-color: black;
+	color: white;
 }
