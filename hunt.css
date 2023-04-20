@@ -15,7 +15,6 @@ body {
 	background-color: black;
 	background-size: auto 100%;
 	background-position: center;
-	color: #570080;
 	overflow: -moz-scrollbars-none;
 }
 
@@ -206,4 +205,37 @@ body {
 #countdown-wrapper {
 	white-space: nowrap;
 	overflow: hidden;
+}
+
+#codephrase-entry {
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
+	width: 200px;
+	height: 200px;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: stretch;
+}
+
+#codephrase-entry-field {
+	z-index: 10;
+	color: white;
+	background-color: black;
+	height: 50px;
+	text-align: center;
+	border: 2px solid white;
+	margin-bottom: 5px;
+	transition: opacity 2s;
+}
+
+#codephrase-entry-button {
+	background-color: black;
+	color: white;
+	height: auto;
+	border: 2px solid white;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	transition: opacity 2s;
 }
