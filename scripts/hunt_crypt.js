@@ -31,7 +31,7 @@ function getCodephraseCookie() {
 
 	for (var i = 0; i < cookies.length; i++) {
 		var cookie = cookies[i];
-		
+
 		// trim
 		while (cookie.charAt(0) == " ") {
 			cookie = cookie.substring(1, cookie.length);
@@ -43,6 +43,20 @@ function getCodephraseCookie() {
 	}
 
 	return null;
+}
+
+function isKey(key, hash) {
+	if (key == "") return false;
+	return decrypt(key, hash) == key;
+}
+
+function makeElementAngry(element, duration, backgroundColor = "red", foregroundColor = "white") {
+	element.style.backgroundColor = backgroundColor;
+	element.style.color = foregroundColor;
+	setTimeout(function () {
+		element.style.backgroundColor = null;
+		element.style.color = null;
+	}, duration);
 }
 
 // zodiac and alethiometer
@@ -109,7 +123,7 @@ async function trick() {
 
 	// fade out constellations
 	var val = 1.0;
-	var fade = setInterval(function() {
+	var fade = setInterval(function () {
 		for (var i = 0; i < COUNT; i++) {
 			var zodiac = ZODIACS[i];
 			zodiac.style.opacity = val.toString();
@@ -137,7 +151,7 @@ const cpHashes = ["U2FsdGVkX195Qjb/WD5LbWTwevYDVFqKDUDq5z4NXBI="];
 
 var codephrase = getCodephraseCookie();
 
-// check for cookie, log it if it exists
+// check for cookie
 if (codephrase != null) {
 	CODEPHRASE_ENTRY_FIELD.value = codephrase;
 } else {
@@ -151,16 +165,13 @@ CODEPHRASE_ENTRY_BUTTON.addEventListener("click", async function () {
 	var valid = false;
 	var index = 0;
 	while (!valid) {
-		if (decrypt(entered, cpHashes[index]) == entered) {
+		if (isKey(entered, cpHashes[index])) {
 			valid = true;
 		} else {
 			index++;
 			if (index >= cpHashes.length) {
 				// invalid codephrase
-				CODEPHRASE_ENTRY_FIELD.style.backgroundColor = "red";
-				setTimeout(function () {
-					CODEPHRASE_ENTRY_FIELD.style.backgroundColor = "black";
-				}, 2000);
+				makeElementAngry(CODEPHRASE_ENTRY_BUTTON, 2000);
 				return;
 			}
 		}
@@ -183,13 +194,17 @@ CODEPHRASE_ENTRY_BUTTON.addEventListener("click", async function () {
 	CODE_ENTRY.style.zIndex = 10;
 });
 
-
 // code entry
 const CONSTELLATION_BUTTONS = document.querySelectorAll(".constellation-button");
+const CONSTELLATION_SUBMIT = document.querySelector("#constellation-submit");
+
+const STAR_KEY_MAP = {
+
+}
 
 var clickedButtons = [];
 
-// put CBs on all the buttons
+// put CBs on all the constellation buttons
 CONSTELLATION_BUTTONS.forEach(function (button) {
 	var index = button.id.split("-").at(-1);
 	button.addEventListener("click", function () {
@@ -210,5 +225,45 @@ CONSTELLATION_BUTTONS.forEach(function (button) {
 		} else {
 			button.style.borderColor = "darkslateblue";
 		}
+	});
+});
+
+// put CB on the enter button to submit
+CONSTELLATION_SUBMIT.addEventListener("click", function () {
+	// only worth doing if a codephrase is entered
+	// just checking in case anyone hacks around, wouldn't work anyways
+	if (codephrase == null) {
+		return;
+	}
+
+	// sort constellations selected
+	clickedButtons.sort();
+
+	// build key
+	var key = codephrase;
+	clickedButtons.forEach(function (i) {
+		key += i.toString();
+	});
+
+	var valid = false;
+
+	// check if key is valid
+	for (var encKey in STAR_KEY_MAP) {
+		if (isKey(key, encKey)) {
+			// this is the way
+			var clue = decrypt(key, STAR_KEY_MAP[key]);
+			valid = true;
+			displayClue(clue);
+		}
+	}
+
+	if (!valid) {
+		makeElementAngry(CONSTELLATION_SUBMIT, 2000);
+	}
+
+	// clear stars
+	clickedButtons = [];
+	CONSTELLATION_BUTTONS.forEach(function (button) {
+		button.style.borderColor = "darkslateblue";
 	});
 });
