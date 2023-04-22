@@ -9,6 +9,7 @@
 	<link rel="icon" href="assets/Icon.png">
 	<meta name="description" content="If you think this is what you're looking for, no it's not.">
 	<meta name="keywords" content="Stonks, House, Stonks House, Shadow Council, Shadow, Council, Shinra">
+	<meta http-equiv="ScreenOrientation" content="autoRotate:disabled">
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
 	<script src="scripts/hunt_crypt.js" defer></script>
 </head>
@@ -32,16 +33,17 @@
 
 		<div id="alethiometer-holder"><img src="assets/hunt/alethiometer.svg" id="alethiometer"></div>
 
-		<div id="codephrase-entry">
-			<input type="text" id="codephrase-entry-field" name="codephrase-entry-field"
+		<form id="codephrase-entry" action="#" onsubmit="handleCodephrase(event)">
+			<input type="text" id="codephrase-entry-field" class="standard-entry-field" name="codephrase-entry-field"
 				placeholder="Enter your passphrase...">
-			<button id="codephrase-entry-button" class="standard-button">Enter</button>
-		</div>
+			<button type="button" id="codephrase-entry-button" class="standard-button">Enter</button>
+		</form>
 	</div>
 
 	<div id="code-entry">
 		<div id="constellation">
 			<img src="assets/hunt/constellation.svg" id="constellation-image">
+			<div id="constellation-button-0" class="constellation-button"></div>
 			<div id="constellation-button-1" class="constellation-button"></div>
 			<div id="constellation-button-2" class="constellation-button"></div>
 			<div id="constellation-button-3" class="constellation-button"></div>
@@ -49,12 +51,20 @@
 			<div id="constellation-button-5" class="constellation-button"></div>
 			<div id="constellation-button-6" class="constellation-button"></div>
 			<div id="constellation-button-7" class="constellation-button"></div>
-			<div id="constellation-button-8" class="constellation-button"></div>
 			<button id="constellation-submit" class="standard-button">Enter</button>
 		</div>
 
+		<div id="team-info">Team info string here.</div>
+
+		<form id="text-entry" action="#" onsubmit="handleText(event)">
+			<input type="text" id="text-entry-field" class="standard-entry-field" name="text-entry-field"
+				placeholder="Enter code...">
+			<button id="text-entry-button" class="standard-button">Enter</button>
+		</form>
+
 		<div id="clue">
-			hehehe
+			<button id="close">X</button>
+			<div id="clue-text">hehe</div>
 		</div>
 	</div>
 </body>

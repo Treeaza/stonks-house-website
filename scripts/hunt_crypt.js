@@ -15,7 +15,13 @@ function encrypt(code, content) {
 
 function decrypt(code, content) {
 	let bytes = CryptoJS.AES.decrypt(content, code);
-	return bytes.toString(CryptoJS.enc.Utf8);
+
+	// nasty hack for if this fucks up
+	try {
+		return bytes.toString(CryptoJS.enc.Utf8);
+	} catch (err) {
+		return "";
+	}
 }
 
 function setCodephraseCookie(codephrase) {
@@ -147,7 +153,11 @@ setTimeout(function () {
 const CODEPHRASE_ENTRY_FIELD = document.querySelector("#codephrase-entry-field");
 const CODEPHRASE_ENTRY_BUTTON = document.querySelector("#codephrase-entry-button");
 const CODE_ENTRY = document.querySelector("#code-entry");
-const cpHashes = ["U2FsdGVkX195Qjb/WD5LbWTwevYDVFqKDUDq5z4NXBI="];
+const TEAM_INFO_STRING = document.querySelector("#team-info");
+
+const cpHashes = {
+	"U2FsdGVkX195Qjb/WD5LbWTwevYDVFqKDUDq5z4NXBI=": "U2FsdGVkX18dkcQc47KeddHLsTtKn4CkQsPwAvWyx7CixnSWkN+kdhD6dxvJxIV+",
+};
 
 var codephrase = getCodephraseCookie();
 
@@ -158,23 +168,30 @@ if (codephrase != null) {
 	console.log("No saved codephrase found.");
 }
 
-CODEPHRASE_ENTRY_BUTTON.addEventListener("click", async function () {
+function handleCodephrase(e) {
+	e.preventDefault();
+	submitCodephrase();
+
+	return false;
+}
+
+async function submitCodephrase() {
 	// check hash
 	var entered = (CODEPHRASE_ENTRY_FIELD.value).toLowerCase();
 
 	var valid = false;
-	var index = 0;
-	while (!valid) {
-		if (isKey(entered, cpHashes[index])) {
+	var teamInfo;
+	for (var encKey in cpHashes) {
+		if (isKey(entered, encKey)) {
 			valid = true;
-		} else {
-			index++;
-			if (index >= cpHashes.length) {
-				// invalid codephrase
-				makeElementAngry(CODEPHRASE_ENTRY_BUTTON, 2000);
-				return;
-			}
+			teamInfo = decrypt(entered, cpHashes[encKey]);
+			break;
 		}
+	}
+
+	if (!valid) {
+		makeElementAngry(CODEPHRASE_ENTRY_BUTTON, 2000);
+		return;
 	}
 
 	// valid codephrase
@@ -183,6 +200,10 @@ CODEPHRASE_ENTRY_BUTTON.addEventListener("click", async function () {
 	// save cookie for next time
 	setCodephraseCookie(codephrase);
 
+	// set team info string
+	TEAM_INFO_STRING.innerHTML = teamInfo;
+
+	// fade out
 	CODEPHRASE_ENTRY_FIELD.style.opacity = "0";
 	CODEPHRASE_ENTRY_BUTTON.style.opacity = "0";
 	CODEPHRASE_ENTRY_FIELD.style.zIndex = "-100";
@@ -192,17 +213,51 @@ CODEPHRASE_ENTRY_BUTTON.addEventListener("click", async function () {
 	// reveal code entry page
 	CODE_ENTRY.style.opacity = 1;
 	CODE_ENTRY.style.zIndex = 10;
-});
+}
+
+CODEPHRASE_ENTRY_BUTTON.addEventListener("click", submitCodephrase);
 
 // code entry
 const CONSTELLATION_BUTTONS = document.querySelectorAll(".constellation-button");
 const CONSTELLATION_SUBMIT = document.querySelector("#constellation-submit");
 
-const STAR_KEY_MAP = {
+const TEXT_ENTRY = document.querySelector("#text-entry-field");
+const TEXT_SUBMIT = document.querySelector("#text-entry-button");
 
+const CLUE = document.querySelector("#clue");
+const CLUE_TEXT = document.querySelector("#clue-text");
+const CLOSE_BUTTON = document.querySelector("#close");
+
+const STAR_KEY_MAP = {
+	"U2FsdGVkX19JtEzmLfWF8iR7TlYD5gyErfH+XZnOaJ459KpReBy8eV+sBUHEfsyh": "U2FsdGVkX18FGuCK3I5Gv0Qbg4r3owoO/XPZo2GnNNw=",
+}
+
+const TEXT_KEY_MAP = {
+	"U2FsdGVkX1/oqQ/TJGDEXU+pdU6ddGrcbcd2vSNI0kab+8Kg6fDpe2eVug6e+NwC": "U2FsdGVkX1+v6HPFuRwbaSl8THOnQLjFuF1/X9pIO6Av/UwI1Vzg5xZrXrcop54J",
 }
 
 var clickedButtons = [];
+
+var showingClue = false;
+
+function displayClue(clue) {
+	CLUE_TEXT.innerHTML = clue;
+	showingClue = true;
+
+	CLUE.style.opacity = "1";
+	CLUE.style.zIndex = "10";
+}
+
+CLOSE_BUTTON.addEventListener("click", function () {
+	if (showingClue) {
+		showingClue = false;
+		CLUE.style.opacity = null;
+
+		setTimeout(function () {
+			CLUE.style.zIndex = null;
+		}, 2000);
+	}
+});
 
 // put CBs on all the constellation buttons
 CONSTELLATION_BUTTONS.forEach(function (button) {
@@ -251,9 +306,10 @@ CONSTELLATION_SUBMIT.addEventListener("click", function () {
 	for (var encKey in STAR_KEY_MAP) {
 		if (isKey(key, encKey)) {
 			// this is the way
-			var clue = decrypt(key, STAR_KEY_MAP[key]);
+			var clue = decrypt(key, STAR_KEY_MAP[encKey]);
 			valid = true;
 			displayClue(clue);
+			break;
 		}
 	}
 
@@ -267,3 +323,43 @@ CONSTELLATION_SUBMIT.addEventListener("click", function () {
 		button.style.borderColor = "darkslateblue";
 	});
 });
+
+function handleText(e) {
+	e.preventDefault();
+	submitTextClue();
+
+	return false;
+}
+
+async function submitTextClue() {
+	// only worth doing if a codephrase is entered
+	// just checking in case anyone hacks around, wouldn't work anyways
+	if (codephrase == null || TEXT_ENTRY.value == "") {
+		return;
+	}
+
+	// build key
+	var key = codephrase + TEXT_ENTRY.value.toString().toLowerCase();
+
+	var valid = false;
+
+	// check if key is valid
+	for (var encKey in TEXT_KEY_MAP) {
+		if (isKey(key, encKey)) {
+			// this is the way
+			var clue = decrypt(key, TEXT_KEY_MAP[encKey]);
+			valid = true;
+			displayClue(clue);
+			break;
+		}
+	}
+	console.log(valid);
+	if (!valid) {
+		makeElementAngry(TEXT_SUBMIT, 2000);
+	}
+
+	// clear field
+	TEXT_ENTRY.value = "";
+}
+
+TEXT_SUBMIT.addEventListener("click", submitTextClue);
